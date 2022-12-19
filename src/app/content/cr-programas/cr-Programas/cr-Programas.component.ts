@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 import { FacultadService } from 'src/app/core/services/facultad/facultad.service';
 import { ModalidadService } from 'src/app/core/services/modalidad/modalidad.service';
@@ -65,6 +65,21 @@ export class CrProgramasComponent implements OnInit {
   procesoPrograma: Proceso;
   procesos: Proceso[];
   formulario: any;
+  /**
+   * Formulario para la creación de un programa 
+   */
+  formAEnviar:any[]; 
+  formInfoBasica: FormGroup; 
+  formDenominacion:FormGroup; 
+  formDenominaciones: FormGroup[]; 
+  modalidadesPrograma:Modalidad[]; 
+  tiposPrograma:TipoPrograma[]; 
+
+  // fin form 
+  
+
+  modalidades: Modalidad[];
+  tipoPro: TipoPrograma[];
   formulaCreacion: Formulario[];
   proId: any;
   denominacionSelected: Denominacion;
@@ -73,8 +88,6 @@ export class CrProgramasComponent implements OnInit {
   paises: Pais[];
   nivelesAcPr: NivelAcademicoPrg[];
   nivelesAcade: any;
-  modalidades: Modalidad[];
-  tipoPro: TipoPrograma[];
   denominacion: Denominacion;
   disable: boolean = true;
   //---*ngif
@@ -148,17 +161,29 @@ export class CrProgramasComponent implements OnInit {
 
 
   openAddcion() {
-   
+    
+    let modalidad: Modalidad; 
+    let tipoPrograma:TipoPrograma; 
+
+    let idModalidad:string; 
+    let idTipoPrograma:string; 
+
     const dialogRef = this.matDial.open(ModalidadTipoComponent,
       {
-        
+        //data:{ idModalidad,idTipoPrograma }, 
+        data:{modalidad, tipoPrograma},
         width: '800px',
       });
     
-
+      //dialogRef.close(datos); 
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+      
+      modalidad = result.modalidad; 
+      tipoPrograma = result.tipoPrograma; 
+
+      this.modalidadesPrograma.push(modalidad); 
+      this.tiposPrograma.push(tipoPrograma);
     });
 
   }
@@ -169,6 +194,10 @@ export class CrProgramasComponent implements OnInit {
     //files
     this.fileInfos = this.uploadFiles.getFiles();
     //message
+    this.modalidadesPrograma = []; 
+    this.tiposPrograma = [];
+    this.formDenominaciones = []; 
+    this.formAEnviar = []; 
     this.getCiudades();
     this.buildForm();
     this.getCampoAmpo()
@@ -202,7 +231,7 @@ export class CrProgramasComponent implements OnInit {
 
   setFacultades(argument: Array<any>) {
     this.facult = argument;
-    console.log(this.facult)
+    console.log('Facultades',this.facult)
   }
   setDepartamentos(de: []) {
     this.depa = de
@@ -282,108 +311,153 @@ deleteFile(filename: string) {
     //creacion 1 sin verificación
     if (id == null && id != 1 && id != 3 && id != 2) {
 
-      this.formulario = this.formBuild.group({
-        campoDetallado:this.formBuild.group ({
-          campoEspecifico:this.formBuild.group({
-            campoAmplio: this.formBuild.group({
-              estado: [''],
-              id: [''],
-              nombreCampoAmplio:['']
-            }),
-            estado: [''],
-            id: [''],
-            nombreCampoEspecifico: [''],
-          }),
-          estado: [''],
-          id: [''],
-          nombreCampoDetallado: [''],
-        }), 
-        codigoRu: [''],
-        creditosElectivos: [''],
-        creditosObligatorios:[''],
-        cupoCohorte: [''],
-        duracionTiempo: [''],
-        estado: [''],
-        estudiantesPp: [''],
-        facultad:this.formBuild.group( {
-          estado:[''],
-          id: [''],
-          nombre: [''],
-        }),
-        fechaCambio: [''],
-        fechaResolucion: [''],
-        id: [''],
-       inclusionTecnologica:[''],
-        instanciaExpedicion: [''],
-        ip: [''],
-        justificacion:[''],
-        modalidad:this.formBuild.group( {
-          estado: [''],
-          id: [''],
-          nombre:['']
-        }),
-        nivelFormacion:this.formBuild.group( {
-          estado: [''],
-          id: [''],
-          nivelAcademico:this.formBuild.group({
-          estado: [''],
-            id: [''],
-            nombre: [''],
+      this.formInfoBasica = this.formBuild.group({
+        'nombrePrograma':['',Validators.required],
+        'idFacultad':['',Validators.required],
+        'idNivelFormacion':['',Validators.required],
+        'idNivelAcademico':['',Validators.required],
+      }); 
+
+      this.formDenominacion = this.formBuild.group({
+        // 'nombrePrograma':[this.formInfoBasica.get('nombrePrograma').value,Validators.required],
+        // 'idFacultad':[this.formInfoBasica.get('idFacultad').value,Validators.required],
+        // 'idNivelFormacion':[this.formInfoBasica.get('idNivelFormacion').value,Validators.required],
+        //'idNivelAcademico':[this.formInfoBasica.get('idNivelAcademico'),Validators.required],
+        'snies':['',Validators.required],
+        'tituloFemenino':['',Validators.required],
+        'tituloMasculino':['',Validators.required],
+        'registroCalificadoUnico':['',Validators.required],
+        'duracionTiempo':['',Validators.required],
+        'idDuracionPeriodicidad':['',Validators.required],
+        'idPeriodicidadAdmision':['',Validators.required],
+        'idCampoAmplio':['',Validators.required],
+        'idCampoEspecifico':['',Validators.required],
+        'idCampoDetallado':['',Validators.required],
+
+        'idModalidad':['',Validators.required],
+        'idTipoPrograma':['',Validators.required],
+
+        'inclusionTecnologica':['',Validators.required],
+        'estudiantesPP':['',Validators.required],
+        'valorMatricula':['',Validators.required],
+        'codigoRU':['',Validators.required],
+        'numeroResolucion':['',Validators.required],
+        'numeroNorma':['',Validators.required],
+        'instanciaExpedicion':['',Validators.required],
+        'fechaResolucion':['',Validators.required],
+        'creditosObligatorios':['',Validators.required],
+        'creditosElectivos':['',Validators.required],
+        'totalCreditos':['',Validators.required],
+        'justificacion':['',Validators.required],
+        'lugarIES':['',Validators.required],
+        'cupoCohorte':['',Validators.required],
+        
+
+
+      }); 
+
+      // this.formulario = this.formBuild.group({
+      //   campoDetallado:this.formBuild.group ({
+      //     campoEspecifico:this.formBuild.group({
+      //       campoAmplio: this.formBuild.group({
+      //         estado: [''],
+      //         id: [''],
+      //         nombreCampoAmplio:['']
+      //       }),
+      //       estado: [''],
+      //       id: [''],
+      //       nombreCampoEspecifico: [''],
+      //     }),
+      //     estado: [''],
+      //     id: [''],
+      //     nombreCampoDetallado: [''],
+      //   }), 
+      //   codigoRu: [''],
+      //   creditosElectivos: [''],
+      //   creditosObligatorios:[''],
+      //   cupoCohorte: [''],
+      //   duracionTiempo: [''],
+      //   estado: [''],
+      //   estudiantesPp: [''],
+      //   facultad:this.formBuild.group( {
+      //     estado:[''],
+      //     id: [''],
+      //     nombre: [''],
+      //   }),
+      //   fechaCambio: [''],
+      //   fechaResolucion: [''],
+      //   id: [''],
+      //  inclusionTecnologica:[''],
+      //   instanciaExpedicion: [''],
+      //   ip: [''],
+      //   justificacion:[''],
+      //   modalidad:this.formBuild.group( {
+      //     estado: [''],
+      //     id: [''],
+      //     nombre:['']
+      //   }),
+      //   nivelFormacion:this.formBuild.group( {
+      //     estado: [''],
+      //     id: [''],
+      //     nivelAcademico:this.formBuild.group({
+      //     estado: [''],
+      //       id: [''],
+      //       nombre: [''],
             
-          }),
-          nombreNivelFormacion:[''],
-        }),
-        nombrePrograma:[''],
-        numeroNorma: [''],
-        numeroResolucion:[''],
-        periocidad:this.formBuild.group( {
-          duracion: [''],
-          estado: [''],
-          id: [''],
-          nombreDuracion: [''],
-          nombrePeriocidad: ['']
-        }),
-        proceso:this.formBuild.group({
-        estado: [''],
-          id: [''],
-          nombre:['']
-        }),
-        programa:this.formBuild.group( {
-          activo: [''],
-          facultad:this.formBuild.group( {
-            id: [''],
-            nombre: [''],
-          }),
-          id: [''],
-          nivelAcademico:this.formBuild.group({
-            activo: [''],
-            estado: [''],
-            formacion:this.formBuild.group( {
-              estado: [''],
-              id: [''],
-              nombre: ['']
-            }),
-            id: [''],
-            nombre: ['']
-          }),
-          nombre: [''],
-          programaVigenteId: [''],
-        }),
-        registroCalificadoUnico: [''],
-        sede: [''],
-        snies: [''],
-        tipoPrograma:this.formBuild.group( {
-          estado: [''],
-          id: [''],
-          nombre:['']
-        }),
-        tituloFemenino: [''],
-        tituloMasculino: [''],
-        usuario: [''],
-        valorMatricula: [''],
-       }) ,
-        this.textarea = true;
-      this.proces2 = true;
+      //     }),
+      //     nombreNivelFormacion:[''],
+      //   }),
+      //   nombrePrograma:[''],
+      //   numeroNorma: [''],
+      //   numeroResolucion:[''],
+      //   periocidad:this.formBuild.group( {
+      //     duracion: [''],
+      //     estado: [''],
+      //     id: [''],
+      //     nombreDuracion: [''],
+      //     nombrePeriocidad: ['']
+      //   }),
+      //   proceso:this.formBuild.group({
+      //   estado: [''],
+      //     id: [''],
+      //     nombre:['']
+      //   }),
+      //   programa:this.formBuild.group( {
+      //     activo: [''],
+      //     facultad:this.formBuild.group( {
+      //       id: [''],
+      //       nombre: [''],
+      //     }),
+      //     id: [''],
+      //     nivelAcademico:this.formBuild.group({
+      //       activo: [''],
+      //       estado: [''],
+      //       formacion:this.formBuild.group( {
+      //         estado: [''],
+      //         id: [''],
+      //         nombre: ['']
+      //       }),
+      //       id: [''],
+      //       nombre: ['']
+      //     }),
+      //     nombre: [''],
+      //     programaVigenteId: [''],
+      //   }),
+      //   registroCalificadoUnico: [''],
+      //   sede: [''],
+      //   snies: [''],
+      //   tipoPrograma:this.formBuild.group( {
+      //     estado: [''],
+      //     id: [''],
+      //     nombre:['']
+      //   }),
+      //   tituloFemenino: [''],
+      //   tituloMasculino: [''],
+      //   usuario: [''],
+      //   valorMatricula: [''],
+      //  }) ,
+      //   this.textarea = true;
+      // this.proces2 = true;
     }
 
 
@@ -481,7 +555,8 @@ onChangeCiudad(event:number){
   //onChangeAdmision
   onChangeAdmision(event: any): void {
     const pTemp: AdmisionPrg = this.admisionPrg.find((p) => p.id == event)!;
-    this.formulario.get('periodAdmision').setValue(pTemp)
+    //this.formulario.get('periodAdmision').setValue(pTemp)
+    this.formDenominacion.get('idDuracionPeriodicidad').setValue(pTemp.id);
   }
 
 
@@ -494,27 +569,34 @@ onChangeCiudad(event:number){
     })
 
     const pTemp: NivelAcademicoPrg = this.nivelesAcPr.find((p) => p.id == event)!;
-   this.formulario.get('programa.nivelAcademico').setValue(pTemp);
+    // this.formulario.get('programa.nivelAcademico').setValue(pTemp);
+    this.formInfoBasica.get('idNivelAcademico').setValue(pTemp.id);
+    
    // this.idformacion = event
-    console.log(this.nivelesAcPr)
+    
     
 
   }
   onchangeFormacion(event:number){
     const pTemp:NivelFormacion=this.nvlFormacion.find((p)=>p.id ==event)!;
-    this.formulario.get('nivelFormacion').setValue(pTemp);
+    //this.formulario.get('nivelFormacion').setValue(pTemp);
+    this.formInfoBasica.get('idNivelFormacion').setValue(pTemp.id);
   }
 
   //onchange campo detallado
   onChangeDetall(event: any): void {
-    alert('click')
-    const pTemp: Campos = this.campoDetallado.find((p) => p.id == event)!;
-    this.formulario.get('campoDetallado').setValue(pTemp)
+    
+    const pTemp: Campos = this.campoDetallado.find((p) => p.id == event);
+    //this.formulario.get('campoDetallado').setValue(pTemp)
+    this.formDenominacion.get('idCampoDetallado').setValue(pTemp.id);
+    
   }
   //facultad
   onChangeFacultad(event: any): void {
     const pTemp: Facultad = this.facult.find((p) => p.id == event)!;
-    this.formulario.get('programa.facultad').setValue(pTemp)
+    //this.formulario.get('programa.facultad').setValue(pTemp)
+    this.formInfoBasica.get('idFacultad').setValue(pTemp.id);
+    
   }
   
 
@@ -540,14 +622,14 @@ onChangeCiudad(event:number){
 
 
   f(campo: string) {
-    let id = this.procesoService.getProceso().id;
-    if (this.valiDat == false) {
-      return this.formulario.get(campo);
+    // let id = this.procesoService.getProceso().id;
+    // if (this.valiDat == false) {
+    //   return this.formulario.get(campo);
 
-    }
+    // }
 
-    return this.formulario.get();
-
+    // return this.formulario.get();
+    return null;
   }
 
 
@@ -559,10 +641,40 @@ onChangeCiudad(event:number){
 
   onSubmit() {
 
-this.creacionServices.creacionPrograma(this.formulario.value).subscribe(resp=>{
-  console.log(resp)
-})
-    console.log(this.formulario.value)
+    // this.creacionServices.creacionPrograma(this.formulario.value).subscribe(resp=>{
+    //   console.log(resp)
+    // }); 
+    
+    //console.log(this.formulario.value)
+    
+    if( this.modalidadesPrograma.length < 1 ){
+      console.log('seleccionar una modalidad y tipo de programa')
+      return ; 
+    }
+    
+    //console.log('imprimiendo value form')
+    // console.log( 'Form Info Basica :', this.formInfoBasica.value);  
+    // console.log( 'Form Info Denominacion :', this.formDenominacion.value);
+
+    
+    this.modalidadesPrograma.forEach( (modalidad, index)  => {
+    
+        this.formDenominacion.get('idModalidad').setValue(modalidad.id);
+        this.formDenominacion.get('idTipoPrograma').setValue(this.tiposPrograma[index].id);
+
+        this.formDenominaciones.push(this.formDenominacion.value); 
+
+    });
+    
+    console.log( 'Form Info Denominaciones :', this.formDenominaciones);
+
+    this.formAEnviar.push(this.formInfoBasica.value); 
+
+    this.formAEnviar.push(this.formDenominaciones); 
+    
+    console.log( 'Form formAEnviar :', this.formAEnviar);
+    
+    
 
 
   }

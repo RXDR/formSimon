@@ -1,5 +1,5 @@
 <div class="container  ">
-  <form [formGroup]="formulario" (ngSubmit)="onSubmit()" novalidate>
+  <form [formGroup]="formInfoBasica" (ngSubmit)="onSubmit()" novalidate>
     <div class="card  mx-auto" style=" margin:auto;padding: 5vh;">
 
       <div class="row">
@@ -13,27 +13,25 @@
       <span class="mx-auto  nuevoTitulo xl:bg-red-50 " id="nuevotitulo"> Datos Básicos </span>
       <div
         style="width: 100%; margin:auto;padding: 8vh; top:1vh;left:0;right:0;z-index:1; border:1px solid var(--blue2); ">
-
+        
+        <!-- [formGroup]="formulario?.get('programa')"  -->
+        <!-- [ngClass]="{'is-invalid':f('programa.nombre')?.invalid,'is-valid': f('programa.nombre')?.valid}"  -->
         <div class="row ">
           <div class="col" style=""
-            [formGroup]="formulario?.get('programa')" id="programa">
+            id="programa">
             <label for="" class="labeltitulo ">*Nombre Programa</label>
-            <input matInput type="text" [readonly]="slect" class="form-control" placeholder=" " [ngClass]="{
-            'is-invalid':f('programa.nombre')?.invalid,
-            'is-valid': f('programa.nombre')?.valid
-          }" formControlName="nombre" style="width:470px ;">
-            <small *ngIf="f('programa.nombre')?.getError('required')"> Este campo es necesario </small>
+            <input matInput type="text" [readonly]="slect" class="form-control" placeholder=" " 
+            formControlName="nombrePrograma" style="width:470px ;">
           </div>
-
+          
         </div>
-
+        
+        <!-- <small *ngIf="f('programa.nombre')?.getError('required')"> Este campo es necesario </small> -->
         <div class="row">
-          <div class="col" [formGroup]="formulario?.get('programa.facultad')">
+          <div class="col" >
             <label>*Facultad</label>
-            <mat-select id="my-select" class="form-control" name="" formControlName="id" [ngClass]="{
-            'is-invalid':f('programa.facultad.id')?.invalid,
-            'is-valid': f('programa.facultad.id')?.valid
-          }" (selectionChange)="onChangeFacultad($event.value)">
+            <mat-select id="my-select" class="form-control" name="" formControlName="idFacultad" 
+              (selectionChange)="onChangeFacultad($event.value)">
               <mat-option [disabled]="readonly"></mat-option>
               <mat-option *ngFor="let facultad of facult" [value]="facultad.id" [disabled]="slect">
                 {{facultad.nombre}}</mat-option>
@@ -44,7 +42,7 @@
           <div class="col">
             <label class="labeltitulo "  >*Nivel Académico &nbsp; </label>
             <mat-select class="form-control" 
-            
+            formControlName="idNivelAcademico" 
             (selectionChange)="onChangeNivelAcademicoPrg($event.value)">
               <mat-option *ngFor="let nivelAc of nivelesAcade" [value]="nivelAc.id" [disabled]="slect">
                 {{nivelAc.nombre}}
@@ -54,16 +52,13 @@
 
           </div>
           <!--end-->
-          <div class="col" [formGroup]="formulario?.get('nivelFormacion')">
+          <div class="col" >
             <label>*Formación</label>
-            <mat-select class="form-control" formControlName="id" [ngClass]="{
-            'is-invalid':f('nivelFormacion.id')?.invalid,
-            'is-valid': f('nivelFormacion.id')?.valid
-          }" (selectionChange)=" onchangeFormacion($event.value)">
+            <mat-select class="form-control" formControlName="idNivelFormacion" 
+             (selectionChange)=" onchangeFormacion($event.value)">
               <mat-option [disabled]="readonly"> </mat-option>
               <mat-option *ngFor="let nivelAc of nvlFormacion" [value]="nivelAc.id" [disabled]="slect">
-          
-          {{nivelAc.nombreNivelFormacion}}  </mat-option>
+              {{nivelAc.nombreNivelFormacion}}  </mat-option>
             </mat-select>
             <small *ngIf="f('nivelFormacion.id')?.getError('required')"> Este campo es necesario </small>
           </div>
@@ -79,6 +74,11 @@
         </div>
       </div>
     </div><br>
+    <!-- AQUÍ FINALIZA EL FORM DE INFORMACIÓN BÁSICA -->
+    
+  </form>
+
+  <form [formGroup]="formDenominacion" (ngSubmit)="onSubmit()" novalidate>
     <div class="row" style="margin-top:-1vh; margin-left:1vh;">
       <div class="col flex">
         <mat-card style="width:99%; border-radius: 13px; display: flex;">
@@ -108,24 +108,19 @@
           <div class="col-2"></div>
           <div class="col-5  ">
             <label class="labeltitulo">*Snies <input [readonly]="readonly" type="text" class="form-control1"
-                placeholder="  " [ngClass]="{
-                'is-invalid':f('snies')?.invalid,
-                'is-valid': f('snies')?.valid
-                }" formControlName="snies"></label>
-            <small *ngIf="f('snies')?.getError('required')"> Este campo es necesario </small>
+                placeholder="  " formControlName="snies"></label>
+            <!-- <small > Este campo es necesario </small> -->
           </div>
 
           <div class="col-3 -ml-16">
             <label class="labeltitulo">*Registro Calificado Único
-              <mat-select [disabled]="readonly" type="number" class="form-control1" placeholder="  " [ngClass]="{
-            'is-invalid':f('registroCalificadoUnico')?.invalid,
-            'is-valid': f('registroCalificadoUnico')?.valid
-          }" formControlName="registroCalificadoUnico" style="width:80px;">
+              <mat-select [disabled]="readonly" type="number" class="form-control1" placeholder="  "
+                formControlName="registroCalificadoUnico" style="width:80px;">
                 <mat-option value="SI">SI</mat-option>
                 <mat-option value="NO">NO</mat-option>
               </mat-select>
             </label>
-            <small *ngIf="f('registroCalificadoUnico')?.getError('required')"> Este campo es necesario </small>
+            <small > Este campo es necesario </small>
 
 
           </div>
@@ -136,20 +131,17 @@
 
           <div class="col">
             <label class="labeltitulo">*Título que otorga(Femenino) <input [readonly]="slect" type="text"
-                class="form-control" [ngClass]="{
-                'is-invalid':f('tituloFemenino')?.invalid,
-                'is-valid': f('tituloFemenino')?.valid
-              }" placeholder=" " formControlName="tituloFemenino"></label>
-            <small *ngIf="f('tituloFemenino')?.getError('required')"> Este campo es necesario </small>
+                class="form-control"  placeholder=" " 
+                formControlName="tituloFemenino"></label>
+            <small > Este campo es necesario </small>
           </div>
 
           <div class="col">
             <label class="labeltitulo">*Título que Otorga(Masculino)
-              <input [readonly]="slect" type="text" class="form-control" [ngClass]="{
-            'is-invalid':f('tituloMasculino')?.invalid,
-            'is-valid': f('tituloMasculino')?.valid
-          }" placeholder="  " formControlName="tituloMasculino"></label>
-            <small *ngIf="f('tituloMasculino')?.getError('required')"> Este campo es necesario </small>
+              <input [readonly]="slect" type="text" class="form-control" 
+                      placeholder="  " 
+                      formControlName="tituloMasculino"></label>
+            <small> Este campo es necesario </small>
           </div>
 
         </div>
@@ -172,10 +164,10 @@
                 </tr>
 
               </thead>
-              <tbody>
-                <tr style="border:1px solid ;">
-                  <td>dato</td>
-                  <td>dato</td>
+              <tbody >
+                <tr style="border:1px solid ;" *ngFor="let modalidad of modalidadesPrograma; let i = index">
+                  <td>{{ tiposPrograma[i].nombre | titlecase  }}</td>
+                  <td>{{ modalidad.nombre | titlecase}}</td>
                 </tr>
               </tbody>
 
@@ -191,28 +183,22 @@
         <hr>
         <div class="row">
 
-          <div class="col " [formGroup]="formulario?.get('periocidad')" >
+          <div class="col " >
             <label class="labeltitulo">Duración estimada del programa</label>
-            <input [readOnly]="readonly" type="number" class="form-control" placeholder="  " [ngClass]="{
-              'is-invalid':f('periocidad.duracion')?.invalid,
-              'is-valid': f('periocidad.duracion')?.valid
-            }" formControlName="duracion" >
-
-
-            <small *ngIf="f('periocidad.duracion')?.getError('required')"> Este campo es necesario </small>
+            <input [readOnly]="readonly" type="number" class="form-control" placeholder="  " 
+            formControlName="duracionTiempo" >
+            <!-- <small *ngIf="f('periocidad.duracion')?.getError('required')"> Este campo es necesario </small> -->
           </div>
-          <div class="col" [formGroup]="formulario?.get('periocidad')">
-            <label for="" style="color: transparent;">asds</label>
-            <mat-select style="float:left;"  class="form-control" (selectionChange)="onChangeAdmision($event.value)" placeholder="  " [ngClass]="{
-              'is-invalid':f('periocidad.id')?.invalid,
-              'is-valid': f('periocidad.id')?.valid
-            }" formControlName="id">
+          <div class="col" >
+            <label for="" style="color: transparent;">Periodicidad</label>
+            <mat-select style="float:left;"  class="form-control" (selectionChange)="onChangeAdmision($event.value)" placeholder="  "  
+            formControlName="idDuracionPeriodicidad">
               <mat-option [disabled]="readonly" *ngFor="let admision of duracionesProgramas" [value]="admision.id"
               >{{admision.nombre}}</mat-option>
 
 
             </mat-select>
-            <small *ngIf="f('periocidad.id')?.getError('required')"> Este campo es necesario </small>
+            <!-- <small *ngIf="f('periocidad.id')?.getError('required')"> Este campo es necesario </small> -->
           </div>
           <div class="col"></div>
         </div>
@@ -220,7 +206,9 @@
 
           <div class="col ">
             <label class="labeltitulo">Periodicidad de la Admisión al Programa</label>
-            <mat-select type="number" class="form-control" placeholder="  "  style="width:250px ;">
+            <mat-select type="number" class="form-control" placeholder="  " 
+                        formControlName="idPeriodicidadAdmision"
+                        style="width:250px ;">
               <mat-option [disabled]="readonly" *ngFor="let admision of admisionPrg" [value]="admision.id"
                 >{{admision.nombre}}</mat-option>
 
@@ -239,7 +227,7 @@
          
           <div class="col wrapper" >
             <label for="" class="labeltitulo">Campo Amplio</label>
-            <mat-select class="form-control"  formControlName="id" (selectionChange)="OnCampoEspe($event.value)">
+            <mat-select class="form-control"  formControlName="idCampoAmplio" (selectionChange)="OnCampoEspe($event.value)">
               <mat-option *ngFor="let campos of campoAmplio" [value]="campos.id"
               
               >{{campos.nombreCampoAmplio}}</mat-option>
@@ -247,13 +235,14 @@
           </div>
           <div class="col" >
             <label class="labeltitulo">Campo Especifico</label>
-            <mat-select class="form-control" formControlName="id"  (selectionChange)="OnCampodetall($event.value)">
+            <mat-select class="form-control" formControlName="idCampoEspecifico"  (selectionChange)="OnCampodetall($event.value)">
               <option value="" selected></option>
               <mat-option  *ngFor="let especi of campoEspe" [value]="especi.id" > {{especi.nombreCampoEspecifico}}</mat-option>
             </mat-select>
           </div>
-          <div class="col"><label class="labeltitulo" [formGroup]="formulario?.get('campoDetallado')">Campo Detallado</label>
-            <mat-select class="form-control"  (selectionChange)="onChangeDetall($event.value)" formControlName="id" >
+          <div class="col"><label class="labeltitulo">Campo Detallado</label>
+            <mat-select class="form-control"  (selectionChange)="onChangeDetall($event.value)" 
+              formControlName="idCampoDetallado" >
               <option value="" selected></option>
               <mat-option *ngFor="let deta of campoDetallado" [value]="deta.id">{{deta.nombreCampoDetallado}}</mat-option>
             </mat-select>
@@ -262,11 +251,8 @@
         <div class="row">
 
           <div class="col"><label for="" class="labeltitulo" style="display:flex;width:max-content">Porcentaje de Inclusión Tecnológica</label>
-            <input [readonly]="readonly" type="number" class="form-control" placeholder="  " [ngClass]="{
-              'is-invalid':f('inclusionTecnologica')?.invalid,
-              'is-valid': f('inclusionTecnologica')?.valid
-            }" formControlName="inclusionTecnologica" placeholder="%">
-            <small *ngIf="f('inclusionTecnologica')?.getError('required')"> Este campo es necesario </small>
+            <input [readonly]="readonly" type="number" class="form-control" placeholder="  " formControlName="inclusionTecnologica" placeholder="%">
+            <!-- <small *ngIf="f('inclusionTecnologica')?.getError('required')"> Este campo es necesario </small> -->
           </div>
           <div class="col"></div>
           <div class="col"></div>
@@ -274,50 +260,40 @@
         <div class="row">
 
           <div class="col wrapper"><label for="" class="labeltitulo">Número de Estudiantes en el Primer periodo</label>
-            <input [readonly]="readonly" type="number" class="form-control" placeholder="  " [ngClass]="{
-              'is-invalid':f('estudiantesPp')?.invalid,
-              'is-valid': f('estudiantesPp')?.valid
-            }" formControlName="estudiantesPp">
-            <small *ngIf="f('estudiantesPp')?.getError('required')"> Este campo es necesario
-            </small>
+            <input [readonly]="readonly" type="number" class="form-control" placeholder="  " 
+             formControlName="estudiantesPP">
+            <!-- <small *ngIf="f('estudiantesPp')?.getError('required')"> Este campo es necesario
+            </small> -->
           </div>
           <div class="col "><label class="labeltitulo">Cupo por cohorte</label>
-            <input [readonly]="readonly" type="number" class="form-control" formControlName="cupoCohorte" [ngClass]="{
-              'is-invalid':f('cupoCohorte')?.invalid,
-              'is-valid': f('cupoCohorte')?.valid
-            }">
-            <small *ngIf="f('cupoCohorte')?.getError('required')"> Este campo es necesario </small>
+            <input [readonly]="readonly" type="number" class="form-control" formControlName="cupoCohorte" 
+            >
+            <!-- <small *ngIf="f('cupoCohorte')?.getError('required')"> Este campo es necesario </small> -->
           </div>
           <div class="col "><label class="labeltitulo">Valor de Matricula</label>
-            <input [readonly]="readonly" type="number" class="form-control" placeholder="  " [ngClass]="{
-              'is-invalid':f('valorMatricula')?.invalid,
-              'is-valid': f('valorMatricula')?.valid
-            }" formControlName="valorMatricula">
-            <small *ngIf="f('valorMatricula')?.getError('required')"> Este campo es necesario </small>
+            <input [readonly]="readonly" type="number" class="form-control" placeholder="  " 
+             formControlName="valorMatricula">
+            <!-- <small *ngIf="f('valorMatricula')?.getError('required')"> Este campo es necesario </small> -->
           </div>
         </div>
         <!--end-->
         <div class="row">
          
           <div class="col "><label class="labeltitulo">*Lugar Desarrollo Vigente IES</label>
-            <mat-select id="my-select" class="form-control" (selectionChange)="onChangeCiudad($event.value)" [ngClass]="{
-              'is-invalid':f('ubicacionOLugarDesarrolloVigenteIes.id')?.invalid,
-              'is-valid': f('ubicacionOLugarDesarrolloVigenteIes.id')?.valid
-            }" formControlName="id" >
+            <mat-select id="my-select" class="form-control" (selectionChange)="onChangeCiudad($event.value)"  
+              formControlName="lugarIES" >
               <mat-option [disabled]="readonly"></mat-option>
               <mat-option  *ngFor="let ciudad of ciudades" [value]="ciudad.id" [disabled]="slect">{{ciudad.nombre}} 
               </mat-option>
             </mat-select>
-            <small *ngIf="f('ubicacionOLugarDesarrolloVigenteIes.id')?.getError('required')"> Este campo es necesario
-            </small>
+            <!-- <small *ngIf="f('ubicacionOLugarDesarrolloVigenteIes.id')?.getError('required')"> Este campo es necesario
+            </small> -->
           </div>
           <div class="col ">
             <label for="" class="labeltitulo">Código RU</label>
-            <input type="number" [readonly]="readonly" class="form-control" placeholder="  " [ngClass]="{
-                'is-invalid':f('codigoRu')?.invalid,
-                'is-valid': f('codigoRu')?.valid
-              }" formControlName="codigoRu">
-            <small *ngIf="f('codigoRu')?.getError('required')"> Este campo es necesario </small>
+            <input type="number" [readonly]="readonly" class="form-control" placeholder="  " 
+             formControlName="codigoRU">
+            <!-- <small *ngIf="f('codigoRu')?.getError('required')"> Este campo es necesario </small> -->
 
           </div>
         </div>
@@ -326,49 +302,47 @@
         <!--end-->
         <div class="row">
 
-          
+          <!-- [ngClass]="{
+            'is-invalid':f('numeroNorma')?.invalid,
+            'is-valid': f('numeroNorma')?.valid
+          }"  -->
           <div class="col  ">
             <label class="labeltitulo">Numero de la norma</label>
-            <input [readonly]="readonly" type="number" class="form-control" placeholder="  " [ngClass]="{
-                'is-invalid':f('numeroNorma')?.invalid,
-                'is-valid': f('numeroNorma')?.valid
-              }" formControlName="numeroNorma">
-            <small *ngIf="f('numeroNorma')?.getError('required')"> Este campo es necesario </small>
+            <input [readonly]="readonly" type="number" class="form-control" placeholder="  " 
+            formControlName="numeroNorma">
+            <!-- <small *ngIf="f('numeroNorma')?.getError('required')"> Este campo es necesario </small> -->
           </div>
           
           <div class="col ">
 
             <label class="labeltitulo">Numero de la resolución</label>
-            <input type="number" class="form-control" placeholder="  " [ngClass]="{
-                'is-invalid':f('numeroResolucion')?.invalid,
-                'is-valid': f('numeroResolucion')?.valid
-              }" formControlName="numeroResolucion">
-            <small *ngIf="f('numeroResolucion')?.getError('required')"> Este campo es necesario </small>
+            <input type="number" class="form-control" placeholder="  "  
+                    formControlName="numeroResolucion">
+            <!-- <small *ngIf="f('numeroResolucion')?.getError('required')"> Este campo es necesario </small> -->
           </div>
         </div>
 
         <!--end-->
         <div class="row">
-          
+          <!-- (keyup)=" onChangeObligatorio($event.target)" -->
           <div class="col ">
-            <label for="">Obligatorios</label>
-            <input [readonly]="readonly" type="number" (keyup)=" onChangeObligatorio($event.target)"
-              class="form-control" placeholder="No. 0" formControlName="creditosObligatorios" [ngClass]="{
-                      'is-invalid':f('creditosObligatorios')?.invalid,
-                      'is-valid': f('creditosObligatorios')?.valid
-                    }">
-            <small *ngIf="f('creditosObligatorios')?.getError('required')"> Este campo es necesario </small>
+            <label for="">Créditos Obligatorios</label>
+            <input [readonly]="readonly" type="number" 
+              class="form-control" placeholder="No. 0" 
+              formControlName="creditosObligatorios" >
+            <!-- <small *ngIf="f('creditosObligatorios')?.getError('required')"> Este campo es necesario </small> -->
           </div>
-          <div class="col"><label for="">Electivos</label>
-            <input [readonly]="readonly" type="number" (keyup)="onChangeElectivo($event.target)"  class="form-control rounded-full"
-             placeholder="No. 0" formControlName="creditosElectivos" [ngClass]="{
-             'is-invalid':f('creditosElectivos')?.invalid,
-              'is-valid': f('creditosElectivos')?.valid
-                    }">
-                  <small *ngIf="f('creditosElectivos')?.getError('required')"> Este campo es necesario </small>
+          <!-- (keyup)="onChangeElectivo($event.target)"  -->
+          <div class="col"><label for="">Créditos Electivos</label>
+            <input [readonly]="readonly" type="number"  class="form-control rounded-full"
+             placeholder="No. 0" formControlName="creditosElectivos" 
+             >
+            <!-- <small *ngIf="f('creditosElectivos')?.getError('required')"> Este campo es necesario </small> -->
           </div>
           <div class="col"><label class="labeltitulo">Total de créditos</label>
-            <input [readonly]="readonly" type="number"  class="form-control" placeholder=" "  >
+            <input [readonly]="readonly" type="number"  class="form-control" placeholder=" "  
+                   formControlName="totalCreditos" 
+            >
             
            
           </div>
@@ -429,6 +403,5 @@
 
     </div>
   </form>
-
 
 </div>
